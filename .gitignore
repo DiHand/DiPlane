@@ -14,3 +14,7 @@ DiPlane/LeapCSharp.NET3.5.dll
 DiPlane/libLeap.dylib
 DiPlane/libLeapCSharp.dylib
 DiPlane/Plugins/
+Plugins/LeapCSharp.NET3.5.dll
+Plugins/LeapCSharp.bundle/Contents/Info.plist
+Plugins/LeapCSharp.bundle/Contents/MacOS/libLeap.dylib
+Plugins/LeapCSharp.bundle/Contents/MacOS/libLeapCSharp.dylib

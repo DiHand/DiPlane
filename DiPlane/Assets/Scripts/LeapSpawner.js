@@ -16,6 +16,13 @@ private var palmVector : Vector3;
 private var handVector : Vector3;
 private var crossVector : Vector3;
 
+private var cumulativeLRRot : float;
+
+var lrRotInfluence : float;
+var lrRotDamping : float;
+var lrPosDamping : float;
+
+
 private var flightController : FlightController;
 
 function Start () {
@@ -40,23 +47,39 @@ function Update () {
 			crossVector = Vector3.Cross(palmVector, handVector);
 			var sideAngle : float = Vector3.Angle(palmVector, Vector3.up*1.0);
 			
-			// Kind of works (without left/right)
-			avatar.transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI, -Vector3.up)
+			/*avatar.transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI, -Vector3.up)
+									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward)
+									*	Quaternion.AngleAxis(Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI, -Vector3.up)
+									*	Quaternion.AngleAxis(Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI, Vector3.left);*/
+
+
+			var lrRot : float = Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI;
+			
+			cumulativeLRRot += lrRot*lrRotInfluence;
+
+
+			avatar.transform.rotation = Quaternion.AngleAxis(cumulativeLRRot, -Vector3.up)
 									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward)
 									*	Quaternion.AngleAxis(Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI, -Vector3.up)
 									*	Quaternion.AngleAxis(Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI, Vector3.left);
 
-
 			//Debug.Log(h.PalmPosition.x);
 			//flightController.horizSpeed = Mathf.Lerp(-flightController.speedRange[1], flightController.speedRange[1], ((Mathf.Clamp(h.PalmPosition.x, -100.0, 100.0)+100.0)/200.0));
 
-			transform.position.x = h.PalmPosition.x*scaleFactor*scaleFactor;
+			//transform.position.x = h.PalmPosition.x*scaleFactor*scaleFactor;
+			//transform.position.x = transform.position.x + h.PalmPosition.x;
+			//transform.Translate(h.PalmPosition.x*lrPosDamping,0,0);
+			
 			transform.position.y = (h.PalmPosition.y*scaleFactor - 130);
 
 			var temp : float = Mathf.Lerp(flightController.speedRange[0],
 				                          flightController.speedRange[1],
 				                          1.0 - ((Mathf.Clamp(h.PalmPosition.z, -100.0, 100.0)+100.0)/200.0));
 			flightController.speed = temp;
+
+			flightController.lrRot = lrRot;
+
+			cumulativeLRRot *= lrRotDamping;
 		}
 	}
 
