@@ -37,6 +37,7 @@ function Update () {
 	
 	if (lastFrame != null) {
 		for (var h : Hand in newFrame.Hands) {
+			// Get Data from the Leap. Ignore it for the most part.
 			var palmDir = h.PalmNormal;			
 			var handDir = h.Direction;
 			palmVector = new Vector3(palmDir.x, palmDir.y, 0);
@@ -46,6 +47,7 @@ function Update () {
 			var palmVectorXY = new Vector3(palmDir.x, palmDir.y, 0).normalized;
 			crossVector = Vector3.Cross(palmVector, handVector);
 			var sideAngle : float = Vector3.Angle(palmVector, Vector3.up*1.0);
+			// End Get Data from the Leap.
 			
 			/*avatar.transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI, -Vector3.up)
 									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward)
@@ -53,15 +55,18 @@ function Update () {
 									*	Quaternion.AngleAxis(Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI, Vector3.left);*/
 
 
-			var lrRot : float = Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI;
-			
-			cumulativeLRRot += lrRot*lrRotInfluence;
+			var sYaw : float = Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI;
+			var sRoll : float = Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI;
+			var sPitch : float = Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI;
 
+			avatar.transform.rotation = Quaternion.AngleAxis(sYaw, -Vector3.up) // Left/Right rotation (Yaw)
+									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward) // Orient ship correclty
+									*	Quaternion.AngleAxis(sRoll, -Vector3.up) // Roll
+									*	Quaternion.AngleAxis(sPitch, Vector3.left); // Pitch (up/down)
 
-			avatar.transform.rotation = Quaternion.AngleAxis(cumulativeLRRot, -Vector3.up)
-									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward)
-									*	Quaternion.AngleAxis(Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI, -Vector3.up)
-									*	Quaternion.AngleAxis(Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI, Vector3.left);
+			//Debug.Log(sYaw);
+			//Debug.Log(sRoll);
+			//Debug.Log(sPitch);
 
 			//Debug.Log(h.PalmPosition.x);
 			//flightController.horizSpeed = Mathf.Lerp(-flightController.speedRange[1], flightController.speedRange[1], ((Mathf.Clamp(h.PalmPosition.x, -100.0, 100.0)+100.0)/200.0));
@@ -70,20 +75,22 @@ function Update () {
 			//transform.position.x = transform.position.x + h.PalmPosition.x;
 			//transform.Translate(h.PalmPosition.x*lrPosDamping,0,0);
 			
+			// Move Up and Down Directly
 			transform.position.y = (h.PalmPosition.y*scaleFactor - 130);
 
-			var temp : float = Mathf.Lerp(flightController.speedRange[0],
-				                          flightController.speedRange[1],
+			// Control Speed by moving hand forward and back
+			var temp : float = Mathf.Lerp(flightController.speedRange[0], // Min speed
+				                          flightController.speedRange[1], // Max Speed
 				                          1.0 - ((Mathf.Clamp(h.PalmPosition.z, -100.0, 100.0)+100.0)/200.0));
 			flightController.speed = temp;
+			//
 
-			flightController.lrRot = lrRot;
+			cumulativeLRRot += (sYaw*lrRotInfluence)*Mathf.Abs(sYaw*lrRotInfluence);
 
-			cumulativeLRRot *= lrRotDamping;
+			flightController.lrRot = sYaw;
+
 		}
 	}
-
-
 
 	lastFrame = newFrame;
 }
