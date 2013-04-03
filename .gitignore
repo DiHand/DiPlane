@@ -8,3 +8,9 @@ DiPlane/DiPlane.userprefs
 DiPlane/Library/
 DiPlane/Temp/
 DiPlane/Assets/Plugins/
+DiPlane/Assets/Scripts/LeapCSharp.NET3.5.dll
+DiPlane/Assets/Scripts/LeapCSharp.bundle/
+DiPlane/LeapCSharp.NET3.5.dll
+DiPlane/libLeap.dylib
+DiPlane/libLeapCSharp.dylib
+DiPlane/Plugins/
