@@ -1,6 +1,7 @@
 #pragma strict
 
 public var speed : float;
+public var speedRange : float[];
 
 function Start () {
 

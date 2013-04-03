@@ -1,5 +1,6 @@
 #pragma strict
 
+var camMarker : GameObject;
 var camTarget : GameObject;
 
 function Start () {
@@ -7,5 +8,6 @@ function Start () {
 }
 
 function Update () {
-	transform.position = camTarget.transform.position;
+	transform.position = camMarker.transform.position;
+	transform.LookAt(camTarget.transform);
 }
