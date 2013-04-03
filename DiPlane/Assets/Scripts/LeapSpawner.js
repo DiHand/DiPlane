@@ -47,10 +47,15 @@ function Update () {
 									*	Quaternion.AngleAxis(Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI, Vector3.left);
 
 
-			transform.position.x = h.PalmPosition.x*scaleFactor;
+			//Debug.Log(h.PalmPosition.x);
+			//flightController.horizSpeed = Mathf.Lerp(-flightController.speedRange[1], flightController.speedRange[1], ((Mathf.Clamp(h.PalmPosition.x, -100.0, 100.0)+100.0)/200.0));
+
+			transform.position.x = h.PalmPosition.x*scaleFactor*scaleFactor;
 			transform.position.y = (h.PalmPosition.y*scaleFactor - 130);
 
-			var temp : float = Mathf.Lerp(flightController.speedRange[0],flightController.speedRange[1],1.0-((Mathf.Clamp(h.PalmPosition.z, -100.0, 100.0)+100.0)/200.0));
+			var temp : float = Mathf.Lerp(flightController.speedRange[0],
+				                          flightController.speedRange[1],
+				                          1.0 - ((Mathf.Clamp(h.PalmPosition.z, -100.0, 100.0)+100.0)/200.0));
 			flightController.speed = temp;
 		}
 	}
