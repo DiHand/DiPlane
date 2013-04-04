@@ -10,7 +10,7 @@ function Start () {
 }
 
 function Update () {
-	rigidbody.velocity = transform.up * speed;// + new Vector3(2*horizSpeed,0,0);
+	rigidbody.velocity = transform.up * speed; // + new Vector3(2*horizSpeed,0,0);
 }
 
 function FixedUpdate () {
