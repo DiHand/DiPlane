@@ -17,3 +17,8 @@ function FixedUpdate () {
 	//rigidbody.AddTorque(0, lrRot*100, 0);
 	//rigidbody.AddForce(new Vector3(horizSpeed,speed,0));
 }
+
+function OnDrawGizmos () {
+	Gizmos.color = Color.red;
+	Gizmos.DrawLine(transform.position, transform.position+(transform.up * speed));
+}

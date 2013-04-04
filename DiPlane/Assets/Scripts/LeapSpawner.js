@@ -57,9 +57,9 @@ function Update () {
 
 			var sYaw : float = Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI;
 			var sRoll : float = Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI;
-			var sPitch : float = Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI;
+			var sPitch : float = Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI*3;
 
-			avatar.transform.rotation = Quaternion.AngleAxis(sYaw, -Vector3.up) // Left/Right rotation (Yaw)
+			avatar.transform.rotation = Quaternion.AngleAxis(cumulativeLRRot, -Vector3.up) // Left/Right rotation (Yaw)
 									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward) // Orient ship correclty
 									*	Quaternion.AngleAxis(sRoll, -Vector3.up) // Roll
 									*	Quaternion.AngleAxis(sPitch, Vector3.left); // Pitch (up/down)
@@ -76,7 +76,7 @@ function Update () {
 			//transform.Translate(h.PalmPosition.x*lrPosDamping,0,0);
 			
 			// Move Up and Down Directly
-			transform.position.y = (h.PalmPosition.y*scaleFactor - 130);
+			//transform.position.y = (h.PalmPosition.y*scaleFactor - 130);
 
 			// Control Speed by moving hand forward and back
 			var temp : float = Mathf.Lerp(flightController.speedRange[0], // Min speed
@@ -85,9 +85,9 @@ function Update () {
 			flightController.speed = temp;
 			//
 
-			cumulativeLRRot += (sYaw*lrRotInfluence)*Mathf.Abs(sYaw*lrRotInfluence);
+			cumulativeLRRot += sYaw*lrRotInfluence; //lrRotInfluence;//(sYaw*lrRotInfluence)*Mathf.Abs(sYaw*lrRotInfluence);
 
-			flightController.lrRot = sYaw;
+			flightController.lrRot = cumulativeLRRot;
 
 		}
 	}
