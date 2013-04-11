@@ -22,6 +22,9 @@ var lrRotInfluence : float;
 var lrRotDamping : float;
 var lrPosDamping : float;
 
+var lastRoll : float;
+var maxRollDelta : float;
+
 
 private var flightController : FlightController;
 
@@ -57,7 +60,15 @@ function Update () {
 
 			var sYaw : float = Mathf.Atan2(-handVector.x, handVector.z)*180/Mathf.PI;
 			var sRoll : float = Mathf.Atan2(crossVector.y, -crossVector.x)*180/Mathf.PI;
+			Debug.Log(sRoll);
 			var sPitch : float = Mathf.Atan2(handVector.y, handVector.z)*180/Mathf.PI*3;
+			//sPitch = 0;
+
+			var rollDiff : float = sRoll-lastRoll;
+			if (Mathf.Abs(rollDiff) > maxRollDelta) {
+				sRoll = lastRoll+maxRollDelta*(rollDiff/Mathf.Abs(rollDiff));
+			}
+			
 
 			avatar.transform.rotation = Quaternion.AngleAxis(cumulativeLRRot, -Vector3.up) // Left/Right rotation (Yaw)
 									*   Quaternion.LookRotation(-Vector3.up, Vector3.forward) // Orient ship correclty
@@ -85,9 +96,12 @@ function Update () {
 			flightController.speed = temp;
 			//
 
-			cumulativeLRRot += sYaw*lrRotInfluence; //lrRotInfluence;//(sYaw*lrRotInfluence)*Mathf.Abs(sYaw*lrRotInfluence);
-
+			//cumulativeLRRot += sYaw*lrRotInfluence; //lrRotInfluence;//(sYaw*lrRotInfluence)*Mathf.Abs(sYaw*lrRotInfluence);
+			cumulativeLRRot -= sRoll*lrRotInfluence;
 			flightController.lrRot = cumulativeLRRot;
+
+
+			lastRoll = sRoll;
 
 		}
 	}
